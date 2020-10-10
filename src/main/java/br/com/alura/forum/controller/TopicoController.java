@@ -7,8 +7,11 @@ import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,8 +31,15 @@ public class TopicoController {
     }
 
     @PostMapping
-    public Topico create(@RequestBody TopicoForm form) {
+    public ResponseEntity<TopicoDto> create(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder) {
         Topico topico = form.converter(this.cursoRespository);
-        return this.topicoRepository.save(topico);
+        this.topicoRepository.save(topico);
+
+        URI uri = uriBuilder
+                .path("/topicos/{id}")
+                .buildAndExpand(topico.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(new TopicoDto(topico));
     }
 }
