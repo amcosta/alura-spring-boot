@@ -1,8 +1,7 @@
 package br.com.alura.forum.controller;
 
-import br.com.alura.forum.controller.dto.TopicoDto;
+import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.form.TopicoForm;
-import br.com.alura.forum.modelo.Curso;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
@@ -11,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -31,7 +30,7 @@ public class TopicoController {
     }
 
     @PostMapping
-    public ResponseEntity<TopicoDto> create(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<TopicoDto> create(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
         Topico topico = form.converter(this.cursoRespository);
         this.topicoRepository.save(topico);
 
@@ -42,4 +41,15 @@ public class TopicoController {
 
         return ResponseEntity.created(uri).body(new TopicoDto(topico));
     }
+
+//    @GetMapping
+//    public ResponseEntity<?> detail(Long id) {
+//        Optional<Topico> result = this.topicoRepository.findById(id);
+//
+//        if (result.isPresent()) {
+//            return new ResponseEntity();
+//        }
+//
+//        return ResponseEntity.notFound();
+//    }
 }

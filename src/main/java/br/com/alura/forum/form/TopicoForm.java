@@ -3,11 +3,25 @@ package br.com.alura.forum.form;
 import br.com.alura.forum.modelo.Curso;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class TopicoForm {
 
+    @NotNull
+    @NotEmpty
+    @Length(min = 10, message = "O campo titulo deve ter mais que 10 caracteres")
     private String titulo;
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 10, message = "O campo mensagem deve ter mais que 10 caracteres")
     private String mensagem;
+
+    @NotNull
+    @NotEmpty
     private String nomeCurso;
 
     public String getTitulo() {
