@@ -33,6 +33,7 @@ public class TopicoController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<TopicoDto> create(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
         Topico topico = form.converter(this.cursoRespository);
         this.topicoRepository.save(topico);
@@ -46,20 +47,35 @@ public class TopicoController {
     }
 
     @GetMapping("/{id}")
-    public Topico detail(@PathVariable Long id) {
-        return this.topicoRepository.getOne(id);
+    public ResponseEntity<?> detail(@PathVariable Long id) {
+        Optional<Topico> optional = this.topicoRepository.findById(id);
+        if (!optional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(optional.get());
     }
 
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<TopicoDto> update(@PathVariable Long id, @RequestBody @Valid TopicoUpdateForm form) {
+        Optional<Topico> optional = this.topicoRepository.findById(id);
+        if (!optional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
         form.setRepository(this.topicoRepository);
         Topico topico = form.update(id);
         return ResponseEntity.ok().body(new TopicoDto(topico));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @Transactional
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Optional<Topico> optional = this.topicoRepository.findById(id);
+        if (!optional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
         this.topicoRepository.deleteById(id);
+        return ResponseEntity.accepted().build();
     }
 }
