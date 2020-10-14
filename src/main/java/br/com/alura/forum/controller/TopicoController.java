@@ -7,6 +7,11 @@ import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,8 +31,12 @@ public class TopicoController {
     private CursoRepository cursoRespository;
 
     @GetMapping
-    public List<TopicoDto> index() {
-        List<Topico> topicos = this.topicoRepository.findAll();
+    public Page<TopicoDto> index(
+            @RequestParam int page,
+            @RequestParam int qtd,
+            @PageableDefault(size = 1) Pageable pageable
+    ) {
+        Page<Topico> topicos = this.topicoRepository.findAll(pageable);
         return TopicoDto.createFromArray(topicos);
     }
 
