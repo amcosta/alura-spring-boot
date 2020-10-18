@@ -7,6 +7,8 @@ import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ public class TopicoController {
     private CursoRepository cursoRespository;
 
     @GetMapping
+    @Cacheable(value = "topicosIndex")
     public Page<TopicoDto> index(
             @RequestParam int page,
             @RequestParam int qtd,
@@ -42,6 +45,7 @@ public class TopicoController {
 
     @PostMapping
     @Transactional
+    @CacheEvict(value = "topicosIndex", allEntries = true)
     public ResponseEntity<TopicoDto> create(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
         Topico topico = form.converter(this.cursoRespository);
         this.topicoRepository.save(topico);
